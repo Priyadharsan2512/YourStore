@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - YourStore</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    form div {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0.75rem;
+      background: #fff;
+      position: relative;
+    }
+
+    .input-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.5rem;
+    }
+
+    select {
+      border: none;
+      outline: none;
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .links {
+      margin-top: 1.5rem;
+    }
+
+    .links a {
+      color: #007bff;
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .eye-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 0.9rem;
+    }
+
+    .success-message {
+      color: green;
+      font-size: 0.9rem;
+    }
+
+    .country-code {
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Register</h1>
+    
+    <!-- Registration Form -->
+    <form id="register-form" onsubmit="registerUser(event)">
+      <div>
+        <div class="input-box">
+          <input type="text" id="first-name" name="first_name" placeholder="First Name" required minlength="1">
+        </div>
+      </div>
+      <div class="input-box">
+        <input type="text" id="middle-name" name="middle_name" placeholder="Middle Name (Optional)">
+      </div>
+      <div>
+        <div class="input-box">
+          <input type="text" id="last-name" name="last_name" placeholder="Last Name" required minlength="1">
+        </div>
+      </div>
+      <div>
+        <div class="input-box">
+          <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+        <div class="error-message" id="username-error"></div>
+      </div>
+      <div>
+        <div class="input-box">
+          <input type="email" id="email" name="email" placeholder="Email" required>
+        </div>
+      </div>
+      <div>
+        <div class="input-box">
+          <div class="country-code">Country Code</div>
+          <select id="country-code" name="country_code" required>
+            <option value="">Select Country</option>  
+            <option value="US">United States (+1)</option>
+            <option value="IN">India (+91)</option>
+            <option value="CA">Canada (+1)</option>
+            <option value="GB">United Kingdom (+44)</option>
+            <option value="AU">Australia (+61)</option>
+            <option value="DE">Germany (+49)</option>
+            <option value="FR">France (+33)</option>
+            <option value="ES">Spain (+34)</option>
+            <option value="IT">Italy (+39)</option>
+            <option value="BR">Brazil (+55)</option>
+            <option value="MX">Mexico (+52)</option>
+            <option value="CN">China (+86)</option>
+            <option value="JP">Japan (+81)</option>
+            <option value="RU">Russia (+7)</option>
+            <option value="ZA">South Africa (+27)</option>
+            <option value="EG">Egypt (+20)</option>
+            <option value="NG">Nigeria (+234)</option>
+            <option value="PK">Pakistan (+92)</option>
+            <option value="KR">South Korea (+82)</option>
+            <option value="SE">Sweden (+46)</option>
+            <option value="NO">Norway (+47)</option>
+            <option value="FI">Finland (+358)</option>
+            <option value="SE">Sweden (+46)</option>
+            <option value="DZ">Algeria (+213)</option>
+            <option value="AO">Angola (+244)</option>
+            <option value="BJ">Benin (+229)</option>
+            <option value="BW">Botswana (+267)</option>
+            <option value="BF">Burkina Faso (+226)</option>
+            <option value="BI">Burundi (+257)</option>
+            <option value="CM">Cameroon (+237)</option>
+            <option value="CV">Cape Verde (+238)</option>
+            <option value="CF">Central African Republic (+236)</option>
+            <option value="TD">Chad (+235)</option>
+            <option value="KM">Comoros (+269)</option>
+            <option value="CD">Democratic Republic of the Congo (+243)</option>
+            <option value="CG">Republic of the Congo (+242)</option>
+            <option value="DJ">Djibouti (+253)</option>
+            <option value="EG">Egypt (+20)</option>
+            <option value="GQ">Equatorial Guinea (+240)</option>
+            <option value="ER">Eritrea (+291)</option>
+            <option value="SZ">Eswatini (+268)</option>
+            <option value="ET">Ethiopia (+251)</option>
+            <option value="GA">Gabon (+241)</option>
+            <option value="GM">Gambia (+220)</option>
+            <option value="GH">Ghana (+233)</option>
+            <option value="GN">Guinea (+224)</option>
+            <option value="GW">Guinea-Bissau (+245)</option>      
+            <option value="KE">Kenya (+254)</option>
+            <option value="LS">Lesotho (+266)</option>
+            <option value="LR">Liberia (+231)</option>
+            <option value="LY">Libya (+218)</option>
+            <option value="MG">Madagascar (+261)</option>
+            <option value="MW">Malawi (+265)</option>
+            <option value="ML">Mali (+223)</option>
+            <option value="MR">Mauritania (+222)</option>
+            <option value="MU">Mauritius (+230)</option>
+            <option value="MA">Morocco (+212)</option>
+            <option value="MZ">Mozambique (+258)</option>
+            <option value="NA">Namibia (+264)</option>
+            <option value="NE">Niger (+227)</option>
+            <option value="RW">Rwanda (+250)</option>
+            <option value="ST">Sao Tome and Principe (+239)</option>
+            <option value="SN">Senegal (+221)</option>
+            <option value="SC">Seychelles (+248)</option>
+            <option value="SL">Sierra Leone (+232)</option>
+            <option value="SO">Somalia (+252)</option>
+            <option value="ZA">South Africa (+27)</option>
+            <option value="AL">Pakistan (+92)</option>
+            <!-- Add more country codes as needed -->
+          </select>
+        </div>
+      </div>
+      <div>
+        <div class="input-box">
+          <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+        </div>
+        <div class="error-message" id="phone-error"></div>
+      </div>
+      <div>
+        <div class="input-box">
+          <input type="password" id="password" name="password" placeholder="Password" required>
+          <span class="eye-icon" onclick="togglePasswordVisibility()">👁</span>
+        </div>
+      </div>
+      <div>
+        <div class="input-box">
+          <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password" required>
+          <span class="eye-icon" onclick="toggleConfirmPasswordVisibility()">👁</span>
+        </div>
+        <div class="error-message" id="password-error"></div>
+      </div>
+      <div>
+        <button type="submit">Register</button>
+      </div>
+      <div class="success-message" id="success-message"></div>
+    </form>
+
+    <div class="links">
+      <a href="/login">Already have an account? Login</a>
+    </div>
+  </div>
+
+  <script>
+    // Toggle Password Visibility
+    function togglePasswordVisibility() {
+      const passwordField = document.getElementById('password');
+      if (passwordField.type === "password") {
+        passwordField.type = "text";
+      } else {
+        passwordField.type = "password";
+      }
+    }
+
+    // Toggle Confirm Password Visibility
+    function toggleConfirmPasswordVisibility() {
+      const confirmPasswordField = document.getElementById('confirm-password');
+      if (confirmPasswordField.type === "password") {
+        confirmPasswordField.type = "text";
+      } else {
+        confirmPasswordField.type = "password";
+      }
+    }
+
+    // Handle Registration
+    function registerUser(event) {
+      event.preventDefault();
+
+      const firstName = document.getElementById('first-name').value;
+      const lastName = document.getElementById('last-name').value;
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const countryCode = document.getElementById('country-code').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const passwordError = document.getElementById('password-error');
+      const successMessage = document.getElementById('success-message');
+
+      // Validate Password Match
+      if (password !== confirmPassword) {
+        passwordError.textContent = "Passwords do not match!";
+        return;
+      }
+      passwordError.textContent = "";
+
+      // Send Data to Backend
+      fetch('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          username: username,
+          email: email,
+          phone: phone,
+          country_code: countryCode,
+          password: password
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          successMessage.textContent = "Registration Successful! Redirecting...";
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+        } else {
+          successMessage.textContent = data.error;
+        }
+      })
+      .catch(err => console.error(err));
+    }
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = urlParams.get('success');
+      if (success === 'true') {
+        const successMessage = document.getElementById('success-message');
+        successMessage.textContent = 'Registration Successful! Please log in.';
+        successMessage.style.color = 'green';
+        successMessage.style.display = 'block';
+        
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
+      }
+    };
+  </script>
+</body>
+</html>

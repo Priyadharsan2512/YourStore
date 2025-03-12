@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourStorechatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chatbox {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .chatlogs {
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        .chat {
+            margin: 10px 0;
+        }
+        .user {
+            text-align: right;
+            color: #333;
+        }
+        .bot {
+            text-align: left;
+            color: #555;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px;
+            font-size: 14px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbox">
+        <div class="chatlogs" id="chatlogs">
+            <div class="chat bot">Hello! How can I help you today?</div>
+        </div>
+        <form id="chat-form" onsubmit="return false;">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <input type="submit" value="Send" onclick="sendMessage()">
+        </form>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            var userInput = document.getElementById('user-input').value;
+            var chatlogs = document.getElementById('chatlogs');
+
+            // Append user message to chatlogs
+            var userChat = document.createElement('div');
+            userChat.className = 'chat user';
+            userChat.innerHTML = userInput;
+            chatlogs.appendChild(userChat);
+
+            // Send user message to server and get response
+            try {
+                let response = await fetch('/yourstore/chatbot', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: userInput })
+                });
+                let data = await response.json();
+
+                // Append bot reply to chatlogs
+                var botChat = document.createElement('div');
+                botChat.className = 'chat bot';
+                botChat.innerHTML = data.reply;
+                chatlogs.appendChild(botChat);
+            } catch (error) {
+                var botChat = document.createElement('div');
+                botChat.className = 'chat bot';
+                botChat.innerHTML = 'Sorry. I am Under Construction.';
+                chatlogs.appendChild(botChat);
+            }
+
+            // Clear user input
+            document.getElementById('user-input').value = '';
+
+            // Scroll to bottom of chatlogs
+            chatlogs.scrollTop = chatlogs.scrollHeight;
+        }
+    </script>
+</body>
+</html>
