@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YourStore - Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #333;
+      padding: 10px 0;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    nav a:hover {
+      background-color: #ddd;
+      color: #333;
+    }
+    .hero {
+      background: url('https://via.placeholder.com/1200x500') no-repeat center center;
+      background-size: cover;
+      height: 500px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+    }
+    .hero h2 {
+      font-size: 3rem;
+      margin: 0;
+    }
+    .categories {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+    }
+    .category {
+      text-align: center;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+    .category:hover {
+      transform: scale(1.05);
+    }
+    .category img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+    .category h3 {
+      margin-top: 10px;
+      font-size: 1.2rem;
+    }
+    .featured-products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .product {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .product:hover {
+      transform: scale(1.05);
+    }
+    .product img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: 15px;
+    }
+    .product h4 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    .product p {
+      color: #333;
+    }
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <h1>YourStore</h1>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <a href="/">🏠Home</a> |
+    <a href="/shop">🛍Shop</a> |
+    <a href="/help">👤Contact Us</a> |
+    <a href="/cart">🛒Cart</a> |
+    <a href="/chatbot">💬Hi</a> 
+    <a href="/login"style="margin-left:auto;">Login</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div>
+      <h2>Welcome to YourStore!</h2>
+      <p>Shop the latest trends and top-selling products now</p>
+    </div>
+  </div>
+
+  <!-- Product Categories -->
+  <section class="categories">
+    <div class="category">
+      <img src="https://via.placeholder.com/100" alt="Electronics">
+      <h3>Electronics</h3>
+    </div>
+    <div class="category">
+      <img src="https://via.placeholder.com/100" alt="Clothing">
+      <h3>Clothing</h3>
+    </div>
+    <div class="category">
+      <img src="https://via.placeholder.com/100" alt="Home & Kitchen">
+      <h3>Home & Kitchen</h3>
+    </div>
+    <div class="category">
+      <img src="https://via.placeholder.com/100" alt="Books">
+      <h3>Books</h3>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="featured-products">
+    <div class="product">
+      <img src="https://via.placeholder.com/300" alt="Product 1">
+      <h4>Product 1</h4>
+      <p>$19.99</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/300" alt="Product 2">
+      <h4>Product 2</h4>
+      <p>$29.99</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/300" alt="Product 3">
+      <h4>Product 3</h4>
+      <p>$39.99</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/300" alt="Product 4">
+      <h4>Product 4</h4>
+      <p>$49.99</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 YourStore. All rights reserved.</p>
+    <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms & Conditions</a>
+  </footer>
+
+</body>
+</html>

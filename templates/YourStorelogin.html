@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YourStore - Login</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    form div {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0.75rem;
+      background: #fff;
+      position: relative;
+    }
+
+    .input-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.5rem;
+    }
+
+    .input-box input::placeholder {
+      color: #aaa;
+    }
+
+    .show-password {
+      cursor: pointer;
+      color: #555;
+      margin-left: 10px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .links {
+      margin-top: 1.5rem;
+    }
+
+    .links a {
+      color: #007bff;
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .password-requirements {
+      text-align: left;
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+
+    /* Error message styles */
+    #error-message {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>YourStore</h1>
+    
+    <!-- Display error message -->
+    <div id="error-message"></div>
+
+    <form id="login-form">
+      <div>
+        <div class="input-box">
+          <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+      </div>
+      <div>
+        <div class="input-box">
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="Password" 
+            required
+            minlength="8"
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+            title="Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&)."
+          >
+          <span class="show-password" id="togglePassword">👁</span>
+        </div>
+        <div class="password-requirements">
+          <p>Password requirements:</p>
+          <ul>
+            <li>At least 8 characters long</li>
+            <li>Contains at least one uppercase letter</li>
+            <li>Contains at least one lowercase letter</li>
+            <li>Contains at least one number</li>
+            <li>Contains at least one special character (e.g., @$!%*?&)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <button type="submit">LOGIN</button>
+      </div>
+    </form>
+
+    <div class="links">
+      <a href="/reset">Forgot password?</a> | 
+      <a href="/register">Register here</a> | 
+      <a href="/help">Contact Us</a> 
+    </div>
+    
+    <div class="links">
+      <a href="/home">Back to Home</a>
+    </div>  
+  </div>
+  
+  <script>
+    document.getElementById("togglePassword").addEventListener("click", function() {
+      const passwordInput = document.getElementById("password");
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    });
+
+    document.getElementById("login-form").addEventListener("submit", async function (event) {
+      event.preventDefault(); // Prevent form submission
+
+      const formData = new FormData(this);
+      const username = formData.get("username");
+      const password = formData.get("password");
+
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const result = await response.json();
+
+      if (response.status === 401) {
+        document.getElementById("error-message").textContent = result.error;
+      } else {
+        window.location.href = "/home"; // Redirect on successful login
+      }
+    });
+  </script>
+</body>
+</html>
