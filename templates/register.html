@@ -143,7 +143,7 @@
       </div>
       <div>
         <div class="input-box">
-          <input type="text" id="username" name="username" placeholder="Username" required>
+          <input type="text" id="username" name="username" placeholder="Username" required minlength="5">
         </div>
         <div class="error-message" id="username-error"></div>
       </div>
@@ -154,9 +154,8 @@
       </div>
       <div>
         <div class="input-box">
-          <div class="country-code">Country Code</div>
-          <select id="country-code" name="country_code" required>
-            <option value="">Select Country</option>  
+          <!-- Country Code Dropdown -->
+          <select id="country-code" name="country-code" required>
             <option value="US">United States (+1)</option>
             <option value="IN">India (+91)</option>
             <option value="CA">Canada (+1)</option>
@@ -172,7 +171,6 @@
             <option value="JP">Japan (+81)</option>
             <option value="RU">Russia (+7)</option>
             <option value="ZA">South Africa (+27)</option>
-            <option value="EG">Egypt (+20)</option>
             <option value="NG">Nigeria (+234)</option>
             <option value="PK">Pakistan (+92)</option>
             <option value="KR">South Korea (+82)</option>
@@ -224,16 +222,14 @@
             <option value="SL">Sierra Leone (+232)</option>
             <option value="SO">Somalia (+252)</option>
             <option value="ZA">South Africa (+27)</option>
-            <option value="AL">Pakistan (+92)</option>
-            <!-- Add more country codes as needed -->
+             <!-- Add more country codes as needed -->
           </select>
+          <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required 
+                 pattern="^\+?\d{1,4}[-\s]?\(?\d{1,4}\)?[-\s]?\d{1,9}$" 
+                 title="Please enter a valid phone number with country code">
         </div>
       </div>
       <div>
-        <div class="input-box">
-          <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
-        </div>
-        <div class="error-message" id="phone-error"></div>
       </div>
       <div>
         <div class="input-box">
@@ -280,6 +276,19 @@
       }
     }
 
+    // Validate Password
+    function validatePassword(password) {
+      const passwordCriteria = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /\d/.test(password),
+        symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      };
+
+      return Object.values(passwordCriteria).every(Boolean);
+    }
+
     // Handle Registration
     function registerUser(event) {
       event.preventDefault();
@@ -293,7 +302,13 @@
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
       const passwordError = document.getElementById('password-error');
+      const errorMessage = document.getElementById('error-message');
       const successMessage = document.getElementById('success-message');
+
+      if (!validatePassword(password)) {
+        passwordError.textContent = "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a symbol.";
+        return;
+      }
 
       // Validate Password Match
       if (password !== confirmPassword) {
@@ -318,19 +333,36 @@
           password: password
         })
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          successMessage.textContent = "Registration Successful! Redirecting...";
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 2000);
-        } else {
-          successMessage.textContent = data.error;
-        }
-      })
-      .catch(err => console.error(err));
+      .then((response) => {
+      if (!response.ok) {
+      return response.json().then((data) => {
+        throw new Error(data.error || 'Registration failed');
+      });
     }
+    return response.json();
+  })
+  .then((data) => {
+    console.log(data); 
+    if (data.success) {
+      if(successMessage) {
+      successMessage.textContent = 'Registration Successful! Please log in...';
+      successMessage.style.color = 'green';
+      alert(data.message || 'Registration successful! Please log in.');
+      successMessage.style.display = 'block';
+      setTimeout(() => {
+      console.log('Redirecting to /login...');
+      window.location.href = '/login';
+    }, 1000);
+    }
+    } else {
+      alert(data.error || 'Registration failed. Please try again.');
+    }
+  })
+  .catch((error) => {
+    alert(error.message);
+  });
+}
+     // Ensure success message is displayed if redirected with a success query
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const success = urlParams.get('success');
@@ -341,8 +373,9 @@
         successMessage.style.display = 'block';
         
         setTimeout(() => {
+          console.log("Redirecting to /login...")
           window.location.href = '/login';
-        }, 2000);
+        }, 3000);
       }
     };
   </script>

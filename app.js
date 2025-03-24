@@ -1,18 +1,22 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const session = require('express-session');  // Add session management
+const crypto = require('crypto'); 
+
+require('dotenv').config({ path: './data.env' });
 
 const app = express();
 const port = 3000;
 
 // MySQL database connection
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'yourstore',
-  password: 'Team4@project',
-  database: 'YourStore'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
 connection.connect((err) => {
@@ -24,8 +28,8 @@ connection.connect((err) => {
 });
 
 // Session management setup
-app.use(session({
-  secret: 'your-secret-key',  // Secret key for encryption
+app.use(session({ 
+  secret: process.env.SESSION_SECRET || 'your-secret-key',  // Secret key for encryption
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }  // Set to true if using HTTPS
@@ -56,8 +60,17 @@ app.get('/register', (_, res) => {
   res.sendFile(path.join(__dirname, 'templates', 'register.html'));
 });
 
-app.get('/reset', (_, res) => {
+app.get('/forgetpassword', (_, res) => {
   res.sendFile(path.join(__dirname, 'templates', 'forgetpassword.html'));
+});
+
+app.get('/reset/:userId', (req, res) => {
+  res.sendFile(path.join(__dirname, 'templates', 'resetpassword.html'));
+});
+
+
+app.get('/cart', (_, res) => {
+  res.sendFile(path.join(__dirname, 'templates', 'cart.html'));
 });
 
 app.get('/help', (_, res) => {
@@ -67,6 +80,7 @@ app.get('/help', (_, res) => {
 app.get('/chatbot', (_, res) => {
   res.sendFile(path.join(__dirname, 'templates', 'chatbot.html'));
 });
+
 // Handle user login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
@@ -103,48 +117,141 @@ app.post('/login', (req, res) => {
       // If username and password match, create session
       req.session.user = results[0];
       res.status(200).json({ success: 'Login successful' });
-      res.redirect('/home');
     });
   });
 });
 
 // Handle user registration
 app.post('/register', (req, res) => {
-  const { first_name, middle_name, last_name, username, email, phone, password } = req.body;
+  const { first_name, middle_name, last_name, username,  country_code, email, phone, password } = req.body;
 
-  if (!first_name || !last_name || !username || !email || !password) {
-    return res.redirect('/register?error=Please fill all required fields.');
+ if (!first_name || !last_name || !username || (!email && !phone) || !password || (phone && !country_code)) {
+    return res.status(400).json({ error:'Please fill all required fields.'});
   }
+  
 
-  // Check if username exists
-  const checkUsernameQuery = 'SELECT * FROM users WHERE username = ?';
-  connection.query(checkUsernameQuery, [username], (err, results) => {
+  // Check if user exists
+  const checkUsernameQuery = 'SELECT * FROM users WHERE username = ? OR email = ? OR phone = ?';
+  connection.query(checkUsernameQuery, [username, email, phone], (err, results) => {
     if (err) {
       console.error('Error checking username:', err);
-      return res.redirect('/register?error=Internal Server Error');
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
     if (results.length > 0) {
-      return res.redirect('/register?error=Username already exist');
+      return res.status(401).json({error:'User already exist'});
     }
     // Hash password and insert user
     bcrypt.hash(password, 10, (err, hashedPassword) => {
       if (err) {
         console.error('Error hashing password:', err);
-        return res.redirect('/register?error=Internal Server Error');
+        return res.status(500).json({ error: 'Internal Server Error' });
       }
 
-      const query = `INSERT INTO users (first_name, middle_name, last_name, username, email, phone, password)
-                     VALUES (?, ?, ?, ?, ?, ?, ?)`;
-      connection.query(query, [first_name, middle_name, last_name, username, email, phone, hashedPassword], (err, result) => {
+      const query = `INSERT INTO users (first_name, middle_name, last_name, username, email,  country_code, phone, password)
+                     VALUES (?, ?, ?, ?, ?, ?,?, ?)`;
+      connection.query(query, [first_name, middle_name, last_name, username, email,  country_code, phone, hashedPassword], (err) => {
         if (err) {
           console.error('Error registering user:', err);
-          return res.redirect('/register?error=Error registering user');
+            return res.status(500).json({ error: 'Error registering user' });
         }
 
-        return res.redirect('/login?success=Registration successful! You can now log in.');
-        // Redirect to login page after successful registration
-        res.redirect('/login');
+        res.status(200).json({ success: 'Registration Successful! Please log in.' });
+        // Redirect to login page after successful registration  
       });
+    });
+  });
+});
+
+// Handle forget password request
+app.post('/forgetpassword', (req, res) => {
+  const username = req.body.username;
+
+  // Query to get user's email and phone number from the database
+  db.query('SELECT email, phone FROM users WHERE username = ?', [username], (err, result) => {
+    if (err) {
+      res.status(500).send('Database error');
+      return;
+    }
+
+    if (result.length === 0) {
+      res.status(404).send('User not found');
+      return;
+    }
+
+    const user = result[0];
+    const token = crypto.randomBytes(20).toString('hex'); // Generate a random token
+
+    // Store the token in the database temporarily (in a password_reset table)
+    db.query('INSERT INTO password_resets (username, token, expires) VALUES (?, ?, ?)', 
+      [username, token, Date.now() + 3600000], // Token expires in 1 hour
+      (err) => {
+        if (err) {
+          res.status(500).send('Error saving token');
+          return;
+        }
+
+        // Send reset link via email or phone (using Nodemailer for email)
+        if (user.email) {
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'your-email@gmail.com',
+              pass: 'your-email-password'
+            }
+          });
+
+          const resetLink = `http://localhost:3000/reset?token=${token}`;
+
+          const mailOptions = {
+            from: 'your-email@gmail.com',
+            to: user.email,
+            subject: 'Password Reset Link',
+            text: `You requested a password reset. Click the link to reset your password: ${resetLink}`
+          };
+
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+              res.status(500).send('Failed to send email');
+              return;
+            }
+            res.send('Reset link sent to your email!');
+          });
+        } else {
+          // Here you can handle sending a reset link via SMS using a service like Twilio
+          // Send the reset link to the user's phone
+          res.send('Reset link sent to your phone (SMS functionality needs implementation)');
+        }
+      });
+  });
+});
+
+// Reset Password (Handle password reset request)
+app.post('/reset-password', (req, res) => {
+  const token = req.body.token;
+  const newPassword = req.body['new-password'];
+
+  // Validate the token
+  db.query('SELECT * FROM password_resets WHERE token = ? AND expires > ?', [token, Date.now()], (err, result) => {
+    if (err) {
+      res.status(500).send('Database error');
+      return;
+    }
+
+    if (result.length === 0) {
+      res.status(400).send('Invalid or expired token');
+      return;
+    }
+
+    const username = result[0].username;
+
+    // Update the password in the database (hashed for security)
+    const hashedPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
+    db.query('UPDATE users SET password = ? WHERE username = ?', [hashedPassword, username], (err) => {
+      if (err) {
+        res.status(500).send('Error updating password');
+        return;
+      }
+      res.send('Password has been reset successfully');
     });
   });
 });

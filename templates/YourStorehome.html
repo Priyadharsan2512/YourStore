@@ -130,13 +130,17 @@
   </header>
 
   <!-- Navigation Bar -->
-  <nav>
-    <a href="/">🏠Home</a> |
-    <a href="/shop">🛍Shop</a> |
-    <a href="/help">👤Contact Us</a> |
-    <a href="/cart">🛒Cart</a> |
-    <a href="/chatbot">💬Hi</a> 
-    <a href="/login"style="margin-left:auto;">Login</a>
+  <nav style="display: flex; justify-content: center; align-items: center; width: 100%;">
+    <a href="/home">🏠Home</a>
+    <a href="/setting">⚙Settings</a>
+    <a href="/help">👤Contact Us</a>
+    <a href="/chatbot">💬Hi</a>
+    <div style="margin-left: auto; display: flex; align-items: center;">
+    <a href="/cart" style="margin-right: 15px;">🛒Cart <span id="cart-count">0</span></a>
+    <a href="/login" id="loginLink">Login</a>
+    <button id="usernameButton" style="display: none; margin-left: 15px; background-color: transparent; color: white; border: none; font-size: 1.2rem; cursor: pointer;" onclick="toggleLogout()">Hello, <span id="usernameDisplay"></span></button>
+      <button id="logoutButton" style="display: none; margin-left: 15px; background-color: transparent; color: white; border: none; font-size: 1rem; cursor: pointer;" onclick="logout()">Logout</button>
+    </div>
   </nav>
 
   <!-- Hero Section -->
@@ -165,31 +169,85 @@
       <img src="https://via.placeholder.com/100" alt="Books">
       <h3>Books</h3>
     </div>
+    <div class="category">
+      <img src="https://via.placeholder.com/100" alt="Games">
+      <h3>Games</h3>
+    </div>
   </section>
 
   <!-- Featured Products -->
   <section class="featured-products">
     <div class="product">
-      <img src="https://via.placeholder.com/300" alt="Product 1">
-      <h4>Product 1</h4>
-      <p>$19.99</p>
+        <img src="https://via.placeholder.com/300" alt="Product 1">
+        <h4>Product 1</h4>
+        <p>$19.99</p>
+        <button onclick="addToCart('Product 1', 19.99)">Add to Cart</button>
     </div>
     <div class="product">
-      <img src="https://via.placeholder.com/300" alt="Product 2">
-      <h4>Product 2</h4>
-      <p>$29.99</p>
+        <img src="https://via.placeholder.com/300" alt="Product 2">
+        <h4>Product 2</h4>
+        <p>$29.99</p>
+        <button onclick="addToCart('Product 2', 29.99)">Add to Cart</button>
     </div>
     <div class="product">
-      <img src="https://via.placeholder.com/300" alt="Product 3">
-      <h4>Product 3</h4>
-      <p>$39.99</p>
+        <img src="https://via.placeholder.com/300" alt="Product 3">
+        <h4>Product 3</h4>
+        <p>$39.99</p>
+        <button onclick="addToCart('Product 3', 39.99)">Add to Cart</button>
     </div>
     <div class="product">
-      <img src="https://via.placeholder.com/300" alt="Product 4">
-      <h4>Product 4</h4>
-      <p>$49.99</p>
+        <img src="https://via.placeholder.com/300" alt="Product 4">
+        <h4>Product 4</h4>
+        <p>$49.99</p>
+        <button onclick="addToCart('Product 4', 49.99)">Add to Cart</button>
     </div>
-  </section>
+    <div class="product">
+      <img src="templates/images/Gift cards/Xbox_gift_card.webp" alt="Xbox gift card $20">
+      <h4>Xbox giftcard $20</h4>
+      <p>$20.00</p>
+      <button onclick="addToCart('Xbox giftcard $20', 20.00)">Add to Cart</button>
+  </div>
+</section>
+
+<script>
+  function addToCart(name, price) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({ name, price });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    alert(name + " added to cart!");
+  }
+
+  function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    document.getElementById("cart-count").innerText = cart.length;
+  }
+
+  function toggleLogout() {
+      const logoutButton = document.getElementById("logoutButton");
+      logoutButton.style.display = logoutButton.style.display === "none" ? "inline-block" : "none";
+    }
+  
+  function logout() {
+      localStorage.removeItem("username");
+      document.getElementById("usernameButton").style.display = "none";
+      document.getElementById("logoutButton").style.display = "none";
+      document.getElementById("loginLink").style.display = "inline-block";
+      alert("You have logged out!");
+    }
+
+  window.onload = function() {
+    let username = localStorage.getItem("username");
+
+    
+      if (username) {
+        document.getElementById("loginLink").style.display = "none"; // Hide login link
+        document.getElementById("usernameButton").style.display = "inline-block"; // Show username button
+        document.getElementById("usernameDisplay").innerText = username; // Display username
+      }
+    updateCartCount(); // Update cart count on page load
+  };
+</script>
 
   <!-- Footer -->
   <footer>

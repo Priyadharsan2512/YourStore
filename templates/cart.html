@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        .cart-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px auto;
+            width: 300px;
+        }
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 50%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .clear-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            width: 50%;
+        }
+        .clear-btn:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>YourStore Cart</h1>
+    <div id="cart"></div>
+    <p class="total" id="total">Total: $0.00</p>
+    <button onclick="addToLater()">Add to Later</button>
+    <button class="clear-btn" onclick="clearCart()">Clear Cart</button>
+    <a href="/home">
+         <button>Back to home</button>
+
+    <script>
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let cartDiv = document.getElementById("cart");
+            let totalPrice = 0.00;
+            cartDiv.innerHTML = "";
+    
+            if (cart.length === 0) {
+                cartDiv.innerHTML = "<p>Your cart is empty.</p>";
+                document.getElementById("total").innerText = "Total: $0.00";  // Update total to 0 when empty
+                return;
+            }
+    
+            cart.forEach((item, index) => {
+                let itemDiv = document.createElement("div");
+                itemDiv.classList.add("cart-item");
+                itemDiv.innerHTML = `<p>${item.name} - $${item.price}</p>
+                                     <button onclick="removeItem(${index})">Remove</button>`;
+                cartDiv.appendChild(itemDiv);
+                totalPrice += item.price;
+            });
+    
+            document.getElementById("total").innerText = "Total: $" + totalPrice.toFixed(2);  // Display total with 2 decimal places
+        }
+    
+        function removeItem(index) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            loadCart();  // Recalculate total after removing item
+        }
+    
+        function clearCart() {
+            localStorage.removeItem("cart");
+            loadCart();  // Recalculate total after clearing cart
+        }
+    
+        window.onload = loadCart;  // Load cart when page is loaded
+    </script>
+    
+
+</body>
+</html>
