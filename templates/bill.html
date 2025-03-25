@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway & Delivery</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .payment-options label {
+            display: block;
+            margin: 10px 0;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .delivery-info {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Choose Payment Method</h2>
+        <div class="payment-options">
+            <label><input type="checkbox" name="payment" value="credit-card" onclick="togglePaymentFields()"> Credit/Debit Card</label>
+            <label><input type="checkbox" name="payment" value="paypal" onclick="togglePaymentFields()"> PayPal</label>
+            <label><input type="checkbox" name="payment" value="upi" onclick="togglePaymentFields()"> UPI</label>
+            <label><input type="checkbox" name="payment" value="net-banking" onclick="togglePaymentFields()"> Net Banking</label>
+            <label><input type="checkbox" name="payment" value="COD" onclick="togglePaymentFields()"> Cash on Delivery</label>
+        </div>
+
+        <!-- Payment Fields for Credit/Debit Card -->
+        <div class="payment-method-fields" id="credit-card-fields">
+            <div class="payment-method-box" id="credit-card-box">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" placeholder="Enter card number" oninput="hideOnInput('credit-card-box')">
+                <label for="card-name">Cardholder Name</label>
+                <input type="text" id="card-name" placeholder="Enter cardholder name" oninput="hideOnInput('credit-card-box')">
+                <label for="expiry-date">Expiry Date</label>
+                <input type="text" id="expiry-date" placeholder="MM/YY" oninput="hideOnInput('credit-card-box')">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" placeholder="Enter CVV" oninput="hideOnInput('credit-card-box')">
+            </div>
+        </div>
+
+        <!-- Payment Fields for PayPal -->
+        <div class="payment-method-fields" id="paypal-fields">
+            <div class="payment-method-box" id="paypal-box">
+                <label for="paypal-email">PayPal Email</label>
+                <input type="email" id="paypal-email" placeholder="Enter your PayPal email" oninput="hideOnInput('paypal-box')">
+                <label for="paypal-password">PayPal Password</label>
+                <input type="password" id="paypal-password" placeholder="Enter your PayPal password" oninput="hideOnInput('paypal-box')">
+            </div>
+        </div>
+
+        <!-- Payment Fields for UPI -->
+        <div class="payment-method-fields" id="upi-fields">
+            <div class="payment-method-box" id="upi-box">
+                <label for="upi-id">UPI ID</label>
+                <input type="text" id="upi-id" placeholder="Enter your UPI ID" oninput="hideOnInput('upi-box')">
+            </div>
+        </div>
+
+        <!-- Payment Fields for Net Banking -->
+        <div class="payment-method-fields" id="net-banking-fields">
+            <div class="payment-method-box" id="net-banking-box">
+                <label for="client-id">Client ID</label>
+                <input type="text" id="client-id" placeholder="Enter your Client ID" oninput="hideOnInput('net-banking-box')">
+                <label for="client-password">Client Password</label>
+                <input type="password" id="client-password" placeholder="Enter your Client Password" oninput="hideOnInput('net-banking-box')">
+            </div>
+        </div>
+
+        <button id="buy-now">Buy Now</button>
+        <a href="/cart">
+            <button>Back to cart</button>
+        </a>
+        <a href="/home">
+            <button>Back to home</button>
+        </a>
+
+        <p class="delivery-info" id="delivery-date"></p>
+    </div>
+
+    <script>
+        function togglePaymentFields() {
+            // Hide all payment method fields first
+            let allFields = document.querySelectorAll(".payment-method-fields");
+            allFields.forEach(field => {
+                field.style.display = "none"; // Hide all fields by default
+            });
+
+            // Show fields based on selected payment method
+            let selectedPaymentMethods = document.querySelectorAll('input[name="payment"]:checked');
+            selectedPaymentMethods.forEach((checkbox) => {
+                let paymentMethod = checkbox.value;
+                if (paymentMethod === "credit-card") {
+                    document.getElementById("credit-card-fields").style.display = "block";
+                } else if (paymentMethod === "paypal") {
+                    document.getElementById("paypal-fields").style.display = "block";
+                } else if (paymentMethod === "upi") {
+                    document.getElementById("upi-fields").style.display = "block";
+                } else if (paymentMethod === "net-banking") {
+                    document.getElementById("net-banking-fields").style.display = "block";
+                }
+            });
+        }
+
+        function hideOnInput(boxId) {
+            let box = document.getElementById(boxId);
+            if (box) {
+                box.style.display = "none"; // Hide the box once typing starts
+            }
+        }
+
+        document.getElementById("buy-now").addEventListener("click", function() {
+            // Get selected payment method(s)
+            let selectedPayment = [];
+            document.querySelectorAll('input[name="payment"]:checked').forEach((checkbox) => {
+                selectedPayment.push(checkbox.value);
+            });
+
+            if (selectedPayment.length === 0) {
+                alert("Please select at least one payment method.");
+                return;
+            }
+
+            // Show selected payment method(s)
+            alert("Selected Payment Method: " + selectedPayment.join(", "));
+
+            // Generate an estimated delivery date (3-7 days from today)
+            let today = new Date();
+            let minDays = 3, maxDays = 7;
+            let estimatedDelivery = new Date(today);
+            estimatedDelivery.setDate(today.getDate() + Math.floor(Math.random() * (maxDays - minDays + 1)) + minDays);
+
+            let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            let deliveryDateStr = estimatedDelivery.toLocaleDateString("en-US", options);
+
+            // Show the estimated delivery date
+            document.getElementById("delivery-date").innerHTML = `Estimated Delivery: <br><strong>${deliveryDateStr}</strong>`;
+        });
+    </script>
+
+</body>
+</html>

@@ -40,7 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files (CSS, JS, images, etc.)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'templates/images')));
 
 // Default route to redirect to /home
 app.get('/', (req, res) => {
@@ -72,6 +72,11 @@ app.get('/reset/:userId', (req, res) => {
 app.get('/cart', (_, res) => {
   res.sendFile(path.join(__dirname, 'templates', 'cart.html'));
 });
+
+app.get('/billing', (_, res) => {
+  res.sendFile(path.join(__dirname, 'templates', 'bill.html'));
+});
+
 
 app.get('/help', (_, res) => {
   res.sendFile(path.join(__dirname, 'templates', 'help.html'));
@@ -256,6 +261,25 @@ app.post('/reset-password', (req, res) => {
   });
 });
 
+// Handle payment method selection
+app.post('/process-payment', (req, res) => {
+  const { paymentMethod } = req.body;
+
+  if (!paymentMethod) {
+    return res.status(400).json({ error: "Please select a payment method." });
+  }
+
+  // Simulate processing payment (integrate with Stripe, PayPal, etc.)
+  console.log(`Processing payment with ${paymentMethod}`);
+
+  // Generate estimated delivery date (3-7 days from today)
+  let today = new Date();
+  let estimatedDelivery = new Date(today);
+  estimatedDelivery.setDate(today.getDate() + Math.floor(Math.random() * 5) + 3);
+  let deliveryDate = estimatedDelivery.toDateString();
+
+  res.json({ success: true, deliveryDate });
+});
 // Logout route
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {

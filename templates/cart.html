@@ -28,7 +28,7 @@
             border-radius: 4px;
             font-size: 1rem;
             cursor: pointer;
-            width: 50%;
+            width: 40%;
             margin-top: 10px;
         }
         button:hover {
@@ -40,7 +40,7 @@
             border: none;
             padding: 8px 15px;
             cursor: pointer;
-            width: 50%;
+            width: 40%;
         }
         .clear-btn:hover {
             background-color: #cc0000;
@@ -52,8 +52,10 @@
     <h1>YourStore Cart</h1>
     <div id="cart"></div>
     <p class="total" id="total">Total: $0.00</p>
-    <button onclick="addToLater()">Add to Later</button>
     <button class="clear-btn" onclick="clearCart()">Clear Cart</button>
+    <button onclick="addToLater()">Add to Later</button>
+    <a href="/billing">
+        <button>Proceed to payment</button>
     <a href="/home">
          <button>Back to home</button>
 

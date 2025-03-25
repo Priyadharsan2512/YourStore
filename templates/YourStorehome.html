@@ -38,7 +38,7 @@
       color: #333;
     }
     .hero {
-      background: url('https://via.placeholder.com/1200x500') no-repeat center center;
+      background: url('D:\Documents\SDLC\YourStore\templates\images\Xbox gift card.png/1200x500') no-repeat center center;
       background-size: cover;
       height: 500px;
       display: flex;
@@ -126,7 +126,7 @@
 
   <!-- Header Section -->
   <header>
-    <h1>YourStore</h1>
+    <h1>Welcome to YourStore</h1>
   </header>
 
   <!-- Navigation Bar -->
@@ -135,6 +135,7 @@
     <a href="/setting">⚙Settings</a>
     <a href="/help">👤Contact Us</a>
     <a href="/chatbot">💬Hi</a>
+    <input type="text" id="search" placeholder="🔍Search products..." onkeyup="filterProducts()">
     <div style="margin-left: auto; display: flex; align-items: center;">
     <a href="/cart" style="margin-right: 15px;">🛒Cart <span id="cart-count">0</span></a>
     <a href="/login" id="loginLink">Login</a>
@@ -143,71 +144,65 @@
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <div class="hero">
-    <div>
-      <h2>Welcome to YourStore!</h2>
-      <p>Shop the latest trends and top-selling products now</p>
-    </div>
-  </div>
-
   <!-- Product Categories -->
   <section class="categories">
-    <div class="category">
+    <div class="category" data-name="Electronics">
       <img src="https://via.placeholder.com/100" alt="Electronics">
       <h3>Electronics</h3>
     </div>
-    <div class="category">
+    <div class="category" data-name="Clothing">
       <img src="https://via.placeholder.com/100" alt="Clothing">
       <h3>Clothing</h3>
     </div>
-    <div class="category">
+    <div class="category" data-name="Home & Kitchen">
       <img src="https://via.placeholder.com/100" alt="Home & Kitchen">
       <h3>Home & Kitchen</h3>
     </div>
-    <div class="category">
+    <div class="category" data-name="Books">
       <img src="https://via.placeholder.com/100" alt="Books">
       <h3>Books</h3>
     </div>
-    <div class="category">
+    <div class="category" data-name="Games">
       <img src="https://via.placeholder.com/100" alt="Games">
       <h3>Games</h3>
     </div>
-  </section>
+</section>
 
   <!-- Featured Products -->
   <section class="featured-products">
-    <div class="product">
+    <div class="product" data-name="Product 1">
         <img src="https://via.placeholder.com/300" alt="Product 1">
         <h4>Product 1</h4>
         <p>$19.99</p>
         <button onclick="addToCart('Product 1', 19.99)">Add to Cart</button>
     </div>
-    <div class="product">
+    <div class="product" data-name="Product 2">
         <img src="https://via.placeholder.com/300" alt="Product 2">
         <h4>Product 2</h4>
         <p>$29.99</p>
         <button onclick="addToCart('Product 2', 29.99)">Add to Cart</button>
     </div>
-    <div class="product">
+    <div class="product" data-name="Product 3">
         <img src="https://via.placeholder.com/300" alt="Product 3">
         <h4>Product 3</h4>
         <p>$39.99</p>
         <button onclick="addToCart('Product 3', 39.99)">Add to Cart</button>
     </div>
-    <div class="product">
+    <div class="product" data-name="Product 4">
         <img src="https://via.placeholder.com/300" alt="Product 4">
         <h4>Product 4</h4>
         <p>$49.99</p>
         <button onclick="addToCart('Product 4', 49.99)">Add to Cart</button>
     </div>
-    <div class="product">
-      <img src="templates/images/Gift cards/Xbox_gift_card.webp" alt="Xbox gift card $20">
-      <h4>Xbox giftcard $20</h4>
-      <p>$20.00</p>
-      <button onclick="addToCart('Xbox giftcard $20', 20.00)">Add to Cart</button>
-  </div>
+    <div class="product" data-name="Xbox giftcard $20">
+        <img src="D:/Documents/SDLC/YourStore/templates/images/ROG_STRIX_product_wallpaper_3840x2400.jpg" alt="Xbox gift card $20">
+        <h4>Xbox giftcard $20</h4>
+        <p>$20.00</p>
+        <button onclick="addToCart('Xbox giftcard $20', 20.00)">Add to Cart</button>
+    </div>
 </section>
+
+      <p id="no-results">No search results found.</p>
 
 <script>
   function addToCart(name, price) {
@@ -235,6 +230,53 @@
       document.getElementById("loginLink").style.display = "inline-block";
       alert("You have logged out!");
     }
+
+    function filterProducts() {
+    let input = document.getElementById("search").value.toLowerCase();
+    let products = document.querySelectorAll(".product");
+    let categories = document.querySelectorAll(".category");
+    let noResults = document.getElementById("no-results");
+    let found = false;
+
+    // Filter products
+    products.forEach(product => {
+        let name = product.getAttribute("data-name");
+
+        if (!name) return; // Skip if data-name is missing
+
+        name = name.toLowerCase(); // Convert to lowercase
+
+        if (name.includes(input)) {
+            product.style.display = "block"; // Show matching product
+            found = true;
+        } else {
+            product.style.display = "none"; // Hide non-matching product
+        }
+    });
+
+    // Filter categories
+    categories.forEach(category => {
+        let name = category.getAttribute("data-name");
+
+        if (!name) return; // Skip if data-name is missing
+
+        name = name.toLowerCase(); // Convert to lowercase
+
+        if (name.includes(input)) {
+            category.style.display = "block"; // Show matching category
+            found = true;
+        } else {
+            category.style.display = "none"; // Hide non-matching category
+        }
+    });
+
+    // Check if no results were found
+    if (!found) {
+        noResults.style.display = "block"; // Show no results message
+    } else {
+        noResults.style.display = "none"; // Hide no results message
+    }
+}
 
   window.onload = function() {
     let username = localStorage.getItem("username");
